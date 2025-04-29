@@ -4,3 +4,6 @@
 *.zarr/
 *.zarr.*
 *.csv
+
+dummy_data
+.DS_Store
