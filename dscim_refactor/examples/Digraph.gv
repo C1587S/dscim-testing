@@ -1,0 +1,10 @@
+digraph {
+	0 [label="LoadSector
+LoadSectorDataStep"]
+	1 [label="ApplyReduction
+ApplyReductionStep"]
+	0 -> 1
+	2 [label="SaveReduced
+SaveReducedDataStep"]
+	1 -> 2
+}
