@@ -1,11 +1,11 @@
 name: Run Unit Tests
 
 on:
-    push:
-      branches: [ main, refactor/** ]
-    pull_request:
-      branches: [ main, refactor/** ]
-    workflow_dispatch:
+  push:
+    branches: [ main, refactor/** ]
+  pull_request:
+    branches: [ main, refactor/** ]
+  workflow_dispatch:
 
 jobs:
   test:
@@ -24,6 +24,10 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
+    - name: Generate test data
+      run: |
+        python file_creation.py
 
     - name: Run tests with pytest
       run: |
