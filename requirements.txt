@@ -1,0 +1,11 @@
+dask==2025.4.1
+dscim==0.6.0
+graphviz==0.20.3
+ipython==8.12.3
+numpy==2.2.5
+p_tqdm==1.4.2
+pytest==8.3.5
+PyYAML==6.0.2
+PyYAML==6.0.2
+rich==14.0.0
+xarray==2025.1.2
