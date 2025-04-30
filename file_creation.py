@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import os
 from pathlib import Path
-
+import numpy as np
 
 config_file_path = "configs/dummy_config.yaml"
 config = yaml.load(open(config_file_path, 'r'), Loader=yaml.FullLoader)
@@ -208,6 +208,6 @@ ds = xr.Dataset(data_vars=data, coords={'region': regions, 'slr': slrs, 'year': 
 ds.to_zarr(config['sectors']['dummy_coastal_sector']['sector_path'], mode = 'w')
 
 # %%
-
-
+# to avoid errors in next step
+np.random.seed(42)
 
