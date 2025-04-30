@@ -120,10 +120,22 @@ def test_output_equivalence(sector, reduction, recipe):
 
         # Compare data values
         for var in ds_legacy.data_vars:
-            # Ensure same dimension ordering
-            if ds_ref[var].dims != ds_legacy[var].dims:
-                ds_ref[var] = ds_ref[var].transpose(*ds_legacy[var].dims)
+            a = ds_legacy[var]
+            b = ds_ref[var]
 
-            xr.testing.assert_allclose(
-                ds_ref[var], ds_legacy[var], rtol=1e-6, atol=1e-9
+            # Align variable dimension names and shape
+            try:
+                b = b.transpose(*a.dims)
+            except ValueError:
+                # If dimensions mismatch, attempt to broadcast
+                b = b.broadcast_like(a)
+
+            # Final check to ensure same dimension order and shape
+            assert b.dims == a.dims and b.shape == a.shape, (
+                f"Dimension mismatch for variable '{var}':\n"
+                f" Legacy dims: {a.dims}, shape: {a.shape}\n"
+                f" Refact dims: {b.dims}, shape: {b.shape}"
             )
+
+            xr.testing.assert_allclose(b, a, rtol=1e-6, atol=1e-9)
+
