@@ -120,9 +120,10 @@ def test_output_equivalence(sector, reduction, recipe):
 
         # Compare data values
         for var in ds_legacy.data_vars:
+            # Ensure same dimension ordering
+            if ds_ref[var].dims != ds_legacy[var].dims:
+                ds_ref[var] = ds_ref[var].transpose(*ds_legacy[var].dims)
+
             xr.testing.assert_allclose(
-                ds_ref[var],
-                ds_legacy[var],
-                rtol=1e-6,
-                atol=1e-9
+                ds_ref[var], ds_legacy[var], rtol=1e-6, atol=1e-9
             )
