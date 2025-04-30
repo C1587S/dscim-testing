@@ -1,5 +1,5 @@
 # dscim-testing
-[Launch Binder](https://mybinder.org/v2/gh/C1587S/dscim-testing/HEAD?urlpath=lab)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/C1587S/dscim-testing/HEAD?urlpath=lab)
 ![Unit Tests](https://github.com/C1587S/dscim-testing/actions/workflows/python-tests.yml/badge.svg)
 
 This repository contains code and examples for working with the `dscim` pipeline.  
