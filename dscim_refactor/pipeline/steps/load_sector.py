@@ -1,43 +1,39 @@
-# dscim/pipeline/steps/load_sector.py
-from dscim_refactor.pipeline.pipeline import PipelineStep
-from dscim_refactor.utils.logger import setup_logger
 import xarray as xr
+from pathlib import Path
 
-logger = setup_logger(__name__)
+from dscim_refactor.pipeline.pipeline import PipelineStep
 
 class LoadSectorDataStep(PipelineStep):
-    def __init__(self, name, sector, config, consolidated=True):
+    """
+    Loads sectoral damage and socioeconomic Zarrs.
+    Outputs keys matching ApplyReductionStep inputs.
+    """
+    def __init__(self, name: str, sector: str, config):
         super().__init__(name)
         self.sector = sector
         self.config = config
-        self.consolidated = consolidated
 
-    def compute(self, data):
+    def process(self, inputs: dict) -> dict:
         sector_info = self.config.sectors[self.sector]
-        sector_path = (self.config.base_path / sector_info["sector_path"]).resolve()
-        socioec_path = (self.config.base_path / self.config.econdata["global_ssp"]).resolve()
+        # full paths resolve via base_path
+        sector_path = Path(self.config.base_path) / sector_info["sector_path"]
+        socioec_path = Path(self.config.base_path) / self.config.econdata["global_ssp"]
 
-        logger.info(f"[{self.name}] Loading sector data from: {sector_path}")
-        logger.info(f"[{self.name}] Loading socioeconomic data from: {socioec_path}")
-
-        ds_damages = xr.open_zarr(sector_path, consolidated=self.consolidated)
-        ds_socioec = xr.open_zarr(socioec_path, consolidated=self.consolidated)
+        ds_damages = xr.open_zarr(sector_path, consolidated=True)
+        ds_socioec = xr.open_zarr(socioec_path, consolidated=True)
 
         return {
-            "damages": ds_damages,
-            "socioec": ds_socioec,
-            "sector_path": sector_path,
-        }
-
-    def get_metadata(self):
-        return {
-            **super().get_metadata(),
+            "damage_ds": ds_damages,
+            "socioec_ds": ds_socioec,
             "sector": self.sector,
-            "consolidated": self.consolidated,
+            "config": self.config,
         }
 
-    def describe_output(self):
+    def describe_output(self) -> dict:
         return {
-            "damages": "dims: rcp, region, gcm, year, model, ssp, batch",
-            "socioec": "dims: year, ssp, region, model"
+            "damage_ds": "xr.Dataset",
+            "socioec_ds": "xr.Dataset",
+            "sector": "str",
+            "config": "ConfigLoader",
         }
+

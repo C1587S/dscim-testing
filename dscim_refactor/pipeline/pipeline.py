@@ -5,20 +5,35 @@ import uuid
 import json
 
 class PipelineStep:
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.name = name
 
-    def compute(self, data):
-        raise NotImplementedError("Each step must implement a compute method.")
+    def compute(self, data: dict = None) -> dict:
+        # Initialize inputs for first step
+        inputs = data or {}
+        outputs = self.process(inputs)
+        if not isinstance(outputs, dict):
+            raise TypeError(f"Step '{self.name}' must return a dict from process().")
+        return outputs
+
+    def process(self, inputs: dict) -> dict:
+        raise NotImplementedError("Each step must implement process(inputs) -> dict.")
 
     def get_metadata(self) -> dict:
+        """
+        Return static metadata for each step (used in visualization).
+        """
         return {
             "name": self.name,
             "class": self.__class__.__name__,
         }
 
     def describe_output(self) -> dict:
-        return {"info": "No output description available"}
+        """
+        Describe the expected output dimensions for each step.
+        Override in subclasses if dims are known ahead of time.
+        """
+        return {}
 
 class DscimPipeline:
     def __init__(self, steps: List[PipelineStep]):
